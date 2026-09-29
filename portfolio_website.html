@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weed6</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#09090b',
+                            card: '#121215',
+                            cardHover: '#18181b',
+                            border: '#27272a',
+                            borderHover: '#3f3f46',
+                            subtle: '#a1a1aa',
+                            muted: '#71717a',
+                            white: '#f4f4f5',
+                            orange: '#f97316'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom Pochita Cursor styling */
+        * {
+            cursor: none !important;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Pochita Cursor Container */
+        #pochita-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 34px;
+            height: 34px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-30%, -30%);
+            will-change: transform;
+            transition: transform 0.04s linear;
+        }
+
+        .cursor-hover #pochita-cursor {
+            transform: translate(-30%, -30%) scale(1.25);
+        }
+
+        /* Background Slideshow Layer */
+        .bg-slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.8s ease-in-out;
+            filter: grayscale(40%) contrast(1.1) brightness(0.6);
+        }
+
+        .bg-slide.active {
+            opacity: 0.18;
+        }
+
+        /* Dark overlay gradient to preserve text contrast */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at center, rgba(9, 9, 11, 0.75) 0%, rgba(9, 9, 11, 0.95) 100%);
+            pointer-events: none;
+        }
+
+        /* MCTiers-style Card Containers with semi-transparency for slideshow background */
+        .mctiers-card {
+            background-color: rgba(18, 18, 21, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid #27272a;
+            border-radius: 20px;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .mctiers-card:hover {
+            border-color: #3f3f46;
+            background-color: rgba(24, 24, 27, 0.92);
+        }
+
+        /* Subtle scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-white selection:text-black">
+
+    <!-- BACKGROUND SLIDESHOW WITH DARK OVERLAY -->
+    <div class="bg-slideshow-container">
+        <img src="IMG0.jpg" class="bg-slide active" alt="Chainsaw Man Scene">
+        <img src="IMG1.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG2.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG3.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG4.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG5.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG6.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG7.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+        <img src="IMG8.jpg" class="bg-slide" alt="Chainsaw Man Scene">
+    </div>
+    <div class="bg-overlay"></div>
+
+    <!-- FULLY COLORED POCHITA SVG CURSOR -->
+    <div id="pochita-cursor">
+        <svg viewBox="0 0 100 100" class="w-full h-full filter drop-shadow-[0_2px_8px_rgba(249,115,22,0.4)]">
+            <!-- Chainsaw Blade (Silver & Dark Steel) -->
+            <path d="M 62 38 L 96 18 L 88 42 Z" fill="#cbd5e1" stroke="#475569" stroke-width="2.5" />
+            <path d="M 68 34 L 72 29 M 76 29 L 80 24 M 84 24 L 88 19" stroke="#1e293b" stroke-width="2.5" />
+            
+            <!-- Pochita Vibrant Orange Body -->
+            <ellipse cx="48" cy="56" rx="34" ry="26" fill="#f97316" />
+            
+            <!-- White Front Face Accent -->
+            <path d="M 62 40 C 72 45 74 60 64 70 C 58 65 58 48 62 40 Z" fill="#ffedd5" opacity="0.3" />
+
+            <!-- Handle Tail (Black / Dark Gray) -->
+            <path d="M 18 50 C 4 45 4 65 16 60" fill="none" stroke="#27272a" stroke-width="5" stroke-linecap="round" />
+            <circle cx="8" cy="53" r="3.5" fill="#09090b" />
+
+            <!-- Big Cute Eye -->
+            <circle cx="62" cy="48" r="6" fill="#09090b" />
+            <circle cx="64" cy="46" r="2.2" fill="#ffffff" />
+            <circle cx="60" cy="50" r="1" fill="#ffffff" />
+
+            <!-- Cheek Flush -->
+            <ellipse cx="56" cy="58" rx="3.5" ry="2" fill="#ea580c" opacity="0.6" />
+
+            <!-- Cute Legs -->
+            <ellipse cx="36" cy="80" rx="5.5" ry="4" fill="#ea580c" />
+            <ellipse cx="60" cy="80" rx="5.5" ry="4" fill="#ea580c" />
+        </svg>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#18181b] border border-brand-border text-white px-5 py-3 rounded-xl shadow-2xl transform translate-y-24 opacity-0 transition-all duration-200">
+        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white text-xs font-bold">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <p id="toastTitle" class="text-xs font-bold text-white uppercase tracking-wider">Copied</p>
+            <p id="toastMsg" class="text-[11px] text-brand-subtle">Copied to clipboard.</p>
+        </div>
+    </div>
+
+    <!-- HEADER NAVBAR -->
+    <header class="sticky top-0 z-40 w-full border-b border-brand-border/80 bg-brand-black/80 backdrop-blur-md">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3">
+                <img src="maxresdefault 2.jpg" class="w-8 h-8 rounded-xl object-cover border border-brand-border" alt="weed6 avatar">
+                <div>
+                    <span class="font-extrabold text-base tracking-tight text-white block leading-none">weed6</span>
+                    <span class="text-[10px] font-mono text-brand-subtle tracking-wider uppercase">Welcome</span>
+                </div>
+            </a>
+
+            <!-- Quick Action Copy Button -->
+            <button onclick="copyToClipboard('weedweedweedsix', 'Discord User')" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-semibold text-white transition-all active:scale-95 flex items-center gap-2">
+                <i class="fa-brands fa-discord text-sm text-brand-subtle"></i>
+                <span class="hidden sm:inline font-mono">weedweedweedsix</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+
+        <!-- PROFILE HERO CARD -->
+        <section class="mctiers-card p-6 sm:p-8 relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row gap-6 items-start justify-between">
+                
+                <div class="flex flex-col sm:flex-row gap-6 items-start">
+                    <!-- Avatar Image (PFP) -->
+                    <img src="maxresdefault 2.jpg" alt="weed6 PFP" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-brand-border shadow-2xl flex-shrink-0">
+
+                    <div class="space-y-3 max-w-xl">
+                        <!-- Display Name, Rank & Aliases -->
+                        <div>
+                            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                                weed6
+                            </h1>
+                            <p class="text-xs font-mono text-brand-subtle mt-1.5">
+                                IGN: <span class="text-white font-semibold">weedvi</span>
+                            </p>
+                            <p class="text-xs font-mono text-brand-orange mt-1 font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-xs"></i> HT3 Netherite Pot (PVPTiers)
+                            </p>
+                            <p class="text-[11px] font-mono text-brand-muted mt-1">
+                                Aliases: <span class="text-brand-subtle">weedvi</span>, <span class="text-brand-subtle">weedweedweedsix</span>
+                            </p>
+                        </div>
+
+                        <!-- Exact Bio -->
+                        <p class="text-brand-subtle text-xs sm:text-sm leading-relaxed">
+                            I'm a 16 year old Fabric mod developer and PC Checker based in the Maldives. I focus on creating client-side utility mods, and also PC checking for currently over 15+ Minecraft servers.
+                        </p>
+
+                        <!-- Social Links (YouTube, Modrinth, Arixen PVP) -->
+                        <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                            <a href="https://www.youtube.com/@weedvi" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-bold text-white transition-all flex items-center gap-2">
+                                <i class="fa-brands fa-youtube text-red-500"></i> YouTube
+                            </a>
+                            <a href="https://modrinth.com/user/weedweedweedsix" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-bold text-white transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-cubes text-emerald-400"></i> Modrinth
+                            </a>
+                            <a href="https://discord.gg/Q3geyV8vTG" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-bold text-white transition-all flex items-center gap-2">
+                                <i class="fa-brands fa-discord text-indigo-400"></i> Arixen PVP
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- NAVIGATION TABS -->
+        <div class="flex items-center gap-2 border-b border-brand-border pb-3 overflow-x-auto">
+            <button onclick="switchTab('experience')" id="tab-btn-experience" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all bg-white text-black">
+                Experience & Roles
+            </button>
+            <button onclick="switchTab('projects')" id="tab-btn-projects" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all bg-white/5 text-brand-subtle hover:text-white">
+                Projects & Mods
+            </button>
+            <button onclick="switchTab('arixen')" id="tab-btn-arixen" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all bg-white/5 text-brand-subtle hover:text-white">
+                Arixen PVP
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: EXPERIENCE & ROLES (DEFAULT ACTIVE TAB) -->
+        <section id="tab-experience" class="tab-content space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Ocean Anti-Cheat -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">ACTIVE</span>
+                        <a href="https://anticheat.ac" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">anticheat.ac</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Ocean Anti-Cheat</h3>
+                    <p class="text-xs font-semibold text-white">Staff</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling support and appeal tickets, moderating texting channels, and moderating runlogs.
+                    </p>
+                </div>
+
+                <!-- Arixen PVP -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">ACTIVE</span>
+                        <a href="https://discord.gg/Q3geyV8vTG" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">discord.gg/Q3geyV8vTG</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Arixen PVP</h3>
+                    <p class="text-xs font-semibold text-white">Admin / Screensharer / Developer</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Active server development, PC checking, Managing superior tickets.
+                    </p>
+                </div>
+
+                <!-- PVPTiers Netherite Pot Community -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                        <a href="https://discord.gg/neth" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">discord.gg/neth</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">PVPTiers Netherite Pot Community</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Staff / Verified Tester</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling general tickets and tier testing.
+                    </p>
+                </div>
+
+                <!-- RyzenMC -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">RyzenMC</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Moderator</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling punishment tickets and moderating the server.
+                    </p>
+                </div>
+
+                <!-- ElytraBox -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">ElytraBox</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Admin</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling store-related support tickets and bug fixes.
+                    </p>
+                </div>
+
+                <!-- HT3+ Netherite Pot Community -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                        <a href="https://discord.gg/ht3" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">discord.gg/ht3</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">HT3+ Netherite Pot Community</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Moderator</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling general, access, and leaderboard tickets.
+                    </p>
+                </div>
+
+                <!-- TropicalClub -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">TropicalClub</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Moderator</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling general tickets and moderating the server.
+                    </p>
+                </div>
+
+                <!-- CreakGens -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                        <a href="https://discord.gg/creakgens" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">discord.gg/creakgens</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">CreakGens</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Helper</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Handling general tickets, appeal tickets, as well as moderating the server.
+                    </p>
+                </div>
+
+                <!-- Dawn Client -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">FORMER</span>
+                        <a href="https://dawn.gg" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">dawn.gg</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Dawn Client</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Chat Mod</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Moderating texting channels.
+                    </p>
+                </div>
+
+                <!-- Stray PVP -->
+                <div class="mctiers-card p-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">DEV TESTING</span>
+                        <a href="https://discord.gg/stray" target="_blank" class="text-[11px] font-mono text-brand-subtle hover:text-white transition-colors">discord.gg/stray</a>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Stray PVP</h3>
+                    <p class="text-xs font-semibold text-brand-subtle">Former Beta Tester</p>
+                    <p class="text-xs text-brand-subtle leading-relaxed">
+                        Testing beta features and reporting bugs.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 2: PROJECTS & MODS -->
+        <section id="tab-projects" class="tab-content hidden space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- FerreMC Durability Overlay Plus -->
+                <div class="mctiers-card p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">RESOURCE PACK</span>
+                            <i class="fa-solid fa-shield text-brand-muted"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">FerreMC Durability Overlay Plus</h3>
+                        <p class="text-xs text-brand-subtle leading-relaxed">
+                            Resource pack for durability overlay visuals during PvP combat.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-brand-muted">Modrinth</span>
+                        <a href="https://modrinth.com/resourcepack/ferremcdurabilityoverlayplus" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white hover:text-black text-xs font-bold text-white transition-all flex items-center gap-1.5">
+                            <span>View Resource Pack</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Early Gap Timer -->
+                <div class="mctiers-card p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">FABRIC MOD</span>
+                            <i class="fa-solid fa-clock text-brand-muted"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Early Gap Timer</h3>
+                        <p class="text-xs text-brand-subtle leading-relaxed">
+                            Fabric utility mod designed for Golden Apple eating sync and timing.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-brand-muted">Modrinth</span>
+                        <a href="https://modrinth.com/mod/earlygap" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white hover:text-black text-xs font-bold text-white transition-all flex items-center gap-1.5">
+                            <span>View Mod</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Equal Mend Calculator -->
+                <div class="mctiers-card p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">FABRIC MOD</span>
+                            <i class="fa-solid fa-calculator text-brand-muted"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Equal Mend Calculator</h3>
+                        <p class="text-xs text-brand-subtle leading-relaxed">
+                            Calculates and balances Mending experience points across equipped gear.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-brand-muted">Modrinth</span>
+                        <a href="https://modrinth.com/mod/equalmend" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white hover:text-black text-xs font-bold text-white transition-all flex items-center gap-1.5">
+                            <span>View Mod</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Fabric Mod Updater -->
+                <div class="mctiers-card p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">GITHUB UTILITY</span>
+                            <i class="fa-brands fa-github text-brand-muted"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Fabric Mod Updater</h3>
+                        <p class="text-xs text-brand-subtle leading-relaxed">
+                            Automated utility script designed to update and manage custom Fabric mod files.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-brand-muted">GitHub</span>
+                        <a href="https://github.com/weeeeedvi/ModUpdater" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white hover:text-black text-xs font-bold text-white transition-all flex items-center gap-1.5">
+                            <span>View Repository</span> <i class="fa-solid fa-code text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Arixen PVP Infrastructure -->
+                <div class="mctiers-card p-5 flex flex-col justify-between space-y-4 md:col-span-2">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">SERVER NETWORK</span>
+                            <i class="fa-solid fa-server text-brand-muted"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Arixen PVP Infrastructure</h3>
+                        <p class="text-xs text-brand-subtle leading-relaxed">
+                            Practice server network featuring automatic tier integration, multi-region nodes, and specialized Netherite Pot FFA environments.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-brand-muted">arixenpvp.xyz</span>
+                        <a href="https://arixenpvp.xyz" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white hover:text-black text-xs font-bold text-white transition-all flex items-center gap-1.5">
+                            <span>Visit Site</span> <i class="fa-solid fa-globe text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 3: ARIXEN PVP -->
+        <section id="tab-arixen" class="tab-content hidden space-y-6">
+            <div class="mctiers-card p-6 sm:p-8 space-y-6">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/15">PRACTICE SERVER</span>
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-brand-subtle border border-brand-border">NETHERITE POT FFA</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white">Arixen PVP</h2>
+                        <p class="text-xs text-brand-subtle mt-0.5">Netherite Pot FFA Server with Automatic Tier Integration</p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <a href="https://discord.gg/Q3geyV8vTG" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-bold text-white transition-all flex items-center gap-2">
+                            <i class="fa-brands fa-discord"></i> Discord
+                        </a>
+                        <a href="https://arixenpvp.xyz" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-brand-border text-xs font-bold text-white transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-globe"></i> Website
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Server Overview & Plans -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-brand-subtle leading-relaxed">
+                    <div class="md:col-span-2 space-y-4">
+                        <p>
+                            Arixen PVP is a dedicated Netherite Pot FFA server that has been alpha tested over the course of a month. It features <span class="text-white font-medium">automatic tier integration</span> directly into the gameplay loop.
+                        </p>
+
+                        <div class="p-4 rounded-xl bg-brand-black/50 border border-brand-border space-y-2">
+                            <h4 class="text-[11px] font-mono font-bold text-white uppercase tracking-wider">Future Expansion Plan</h4>
+                            <ul class="space-y-1.5 text-brand-subtle list-disc list-inside">
+                                <li>We plan on expanding this server to a <span class="text-white font-semibold">Verified Testing Server</span> within 3 months of release on PVPTiers.</li>
+                                <li>Releasing duels for other gamemodes, party systems, and mini-games slowly within the course of next month.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Connection Endpoint Cards -->
+                    <div class="space-y-3">
+                        <h4 class="text-[11px] font-mono font-bold text-white uppercase tracking-wider">Server IP Nodes</h4>
+
+                        <!-- Mumbai, India -->
+                        <div class="p-3.5 rounded-xl bg-brand-black/60 border border-brand-border space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-white flex items-center gap-1.5">
+                                    <i class="fa-solid fa-location-dot text-brand-subtle"></i> Mumbai, India
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black px-3 py-2 rounded-lg font-mono text-xs text-white border border-brand-border">
+                                <span>arixenpvp.xyz</span>
+                                <button onclick="copyToClipboard('arixenpvp.xyz', 'Mumbai Primary IP')" class="text-brand-subtle hover:text-white transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg font-mono text-[11px] text-brand-subtle border border-brand-border/60">
+                                <span>3.108.196.34:19001</span>
+                                <button onclick="copyToClipboard('3.108.196.34:19001', 'Mumbai Alternate IP')" class="text-brand-muted hover:text-white transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dhaka, Bangladesh -->
+                        <div class="p-3.5 rounded-xl bg-brand-black/60 border border-brand-border space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-white flex items-center gap-1.5">
+                                    <i class="fa-solid fa-location-dot text-brand-subtle"></i> Dhaka, Bangladesh
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black px-3 py-2 rounded-lg font-mono text-xs text-white border border-brand-border">
+                                <span>bd.arixenpvp.xyz</span>
+                                <button onclick="copyToClipboard('bd.arixenpvp.xyz', 'Dhaka Primary IP')" class="text-brand-subtle hover:text-white transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg font-mono text-[11px] text-brand-subtle border border-brand-border/60">
+                                <span>160.25.5.206:4067</span>
+                                <button onclick="copyToClipboard('160.25.5.206:4067', 'Dhaka Alternate IP')" class="text-brand-muted hover:text-white transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-brand-border bg-brand-black/80 backdrop-blur-md py-8 mt-10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-subtle">
+            <div class="flex items-center gap-2">
+                <span class="text-white font-bold">weed6</span>
+                <span>•</span>
+                <span>© 2026 weed6. All rights reserved.</span>
+            </div>
+
+            <div class="flex items-center gap-5">
+                <a href="https://www.youtube.com/@weedvi" target="_blank" class="hover:text-white transition-colors">YouTube</a>
+                <a href="https://modrinth.com/user/weedweedweedsix" target="_blank" class="hover:text-white transition-colors">Modrinth</a>
+                <a href="https://discord.gg/Q3geyV8vTG" target="_blank" class="hover:text-white transition-colors">Arixen PVP</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. POCHITA CURSOR SMOOTH TRACKING
+        const pochita = document.getElementById('pochita-cursor');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let px = mouseX;
+        let py = mouseY;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            px += (mouseX - px) * 0.28;
+            py += (mouseY - py) * 0.28;
+            pochita.style.left = `${px}px`;
+            pochita.style.top = `${py}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect for links & buttons
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+
+        // 2. BACKGROUND SLIDESHOW CROSSFADE
+        const slides = document.querySelectorAll('.bg-slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 5000);
+
+        // 3. TAB CONTROLLER
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-black');
+                btn.classList.add('bg-white/5', 'text-brand-subtle');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('bg-white', 'text-black');
+            activeBtn.classList.remove('bg-white/5', 'text-brand-subtle');
+        }
+
+        // 4. COPY TO CLIPBOARD SYSTEM
+        function copyToClipboard(text, label) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMsg = document.getElementById('toastMsg');
+
+            toastTitle.innerText = 'Copied!';
+            toastMsg.innerText = `${label}: "${text}"`;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
